@@ -79,6 +79,8 @@ async def send_meme(message: Message):
         "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRp94fXrC0aFg9LIJyMrDnewQ1wBg7qo_9fyQ&usqp=CAU"
 
     ]
+
+
     random_mem = random.choice(mem_file_id)
     await dp.bot.send_message(chat_id=message.from_user.id, text=random_mem)
 
