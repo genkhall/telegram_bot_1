@@ -62,6 +62,7 @@ async def cmd_pin(message: types.Message):
 
 
 
+
 def register_handlers_client(dp: Dispatcher):
     dp.register_message_handler(start_command, commands=['start'])
     dp.register_message_handler(quiz_1, commands=['quiz'])
