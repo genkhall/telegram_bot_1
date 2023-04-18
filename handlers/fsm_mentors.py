@@ -6,7 +6,7 @@ from aiogram.dispatcher.filters.state import State, StatesGroup
 from . import clients_kb
 
 
-class FSMAdmin(StatesGroup):
+class FSMAdminMentor(StatesGroup):
     id = State()
     name = State()
     direction = State()
@@ -19,24 +19,22 @@ async def start_fsm(message: types.Message):
     if message.from_user.id not in ADMINS:
         await message.answer("Ты не АДМИН!")
     else:
-        await FSMAdmin.id.set()
+        await FSMAdminMentor.id.set()
         await message.answer("Напишите ваше ID", reply_markup=clients_kb.cancel_markup)
-
 
 
 async def load_id(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
         data["id"] = message.text
-    await FSMAdmin.next()
+    await FSMAdminMentor.next()
     await message.answer("Как вас зовут?")
 
 
 async def load_name(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
-        data["username"] = message.from_user.username
-        data["name"] = message.text
-    await FSMAdmin.next()
-    await message.answer("Ваше направление?", reply_markup=clients_kb.direction_markup)
+        data['name'] = message.text
+    await FSMAdminMentor.next()
+    await message.answer("Какое направление?", reply_markup=clients_kb.direction_markup)
 
 
 async def load_direction(message: types.Message, state: FSMContext):
@@ -45,7 +43,7 @@ async def load_direction(message: types.Message, state: FSMContext):
     else:
         async with state.proxy() as data:
             data["direction"] = message.text
-        await FSMAdmin.next()
+        await FSMAdminMentor.next()
         await message.answer("Напишите возраст")
 
 
@@ -57,7 +55,7 @@ async def load_age(message: types.Message, state: FSMContext):
     else:
         async with state.proxy() as data:
             data["age"] = message.text
-        await FSMAdmin.next()
+        await FSMAdminMentor.next()
         await message.answer("Напишите свою группу", reply_markup=clients_kb.cancel_markup)
 
 
@@ -65,10 +63,10 @@ async def load_group(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
         data["group"] = message.text
 
-        await message.answer(data['id'],
-                             f"{data['name']} {data['direction']}"
-                                     f"{data['age']} {data['group']}")
-    await FSMAdmin.next()
+        await message.answer(f"ID{data['id']}",
+                             f"Имя:{data['name']} Направление: {data['direction']}"
+                             f"Возраст ментора:{data['age']} Группа ментора:{data['group']}")
+    await FSMAdminMentor.next()
     await message.answer("Проверьте данные", reply_markup=clients_kb.submit_markup)
 
 
@@ -76,17 +74,17 @@ async def submit_state(message: types.Message, state: FSMContext):
     if message.text.lower() == "все верно":
 
         await state.finish()
-        await message.answer("Завершено")
+        await message.answer("Завершено", reply_markup=clients_kb.start_markup)
     elif message.text.lower() == "заново":
-        await FSMAdmin.id.set()
+        await FSMAdminMentor.id.set()
         await message.answer("Напишите ваше ID")
 
 
 async def cancel_fsm(message: types.Message, state: FSMContext):
     current_state = await state.get_state()
-    if current_state:
+    if current_state is not None:
         await state.finish()
-        await message.answer("See you soon!",reply_markup=clients_kb.start_markup)
+        await message.answer("See you soon!", reply_markup=clients_kb.start_markup)
 
 
 def register_handlers_fsm(dp: Dispatcher):
@@ -94,9 +92,10 @@ def register_handlers_fsm(dp: Dispatcher):
     dp.register_message_handler(cancel_fsm, Text(equals='отмена', ignore_case=True), state="*")
 
     dp.register_message_handler(start_fsm, commands=['go'])
-    dp.register_message_handler(load_id, state=FSMAdmin.id)
-    dp.register_message_handler(load_name, state=FSMAdmin.name)
-    dp.register_message_handler(load_direction, state=FSMAdmin.direction)
-    dp.register_message_handler(load_age, state=FSMAdmin.age)
-    dp.register_message_handler(load_group, state=FSMAdmin.group)
-    dp.register_message_handler(submit_state, state=FSMAdmin.submit)
+    dp.register_message_handler(load_id, state=FSMAdminMentor.id)
+    dp.register_message_handler(load_name, state=FSMAdminMentor.name)
+    dp.register_message_handler(load_direction, state=FSMAdminMentor.direction)
+    dp.register_message_handler(load_age, state=FSMAdminMentor.age)
+    dp.register_message_handler(load_group, state=FSMAdminMentor.group)
+    dp.register_message_handler(submit_state, state=FSMAdminMentor.submit)
+
