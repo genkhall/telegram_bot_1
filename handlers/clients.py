@@ -3,6 +3,7 @@ from config import bot, dp
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 import random
 from aiogram.types import ContentType, Message
+from database.bot_db import sql_command_random
 
 
 # @dp.message_handler(commands=['start'])
@@ -59,8 +60,13 @@ async def cmd_pin(message: types.Message):
         await bot.pin_chat_message(chat_id=reply_message.chat.id, message_id=reply_message.message_id)
 
 
-
-
+async def get_random_mentor():
+    random_user = await sql_command_random()
+    await bot.send_message(f'{random_user[1]}',
+                           f'{random_user[2]}',
+                           f'{random_user[3]}',
+                           f'{random_user[4]}',
+                           f'{random_user[5]}')
 
 
 def register_handlers_client(dp: Dispatcher):
@@ -68,3 +74,4 @@ def register_handlers_client(dp: Dispatcher):
     dp.register_message_handler(quiz_1, commands=['quiz'])
     dp.register_message_handler(send_meme, commands=['mem'])
     dp.register_message_handler(cmd_pin, commands=['pin'], commands_prefix='!/')
+    dp.register_message_handler(get_random_mentor, commands=['get'])

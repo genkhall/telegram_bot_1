@@ -26,24 +26,24 @@ cancel_markup = ReplyKeyboardMarkup(
     KeyboardButton("ОТМЕНА"),
 )
 
-direction_markup = ReplyKeyboardMarkup(
-    resize_keyboard=True,
-    one_time_keyboard=True,
-    row_width=3
-).add(
-    KeyboardButton("BACKEND"),
-    KeyboardButton("FRONT-END"),
-    KeyboardButton("UX-UI DESIGN"),
-    KeyboardButton("IOS"),
-    KeyboardButton("ANDROID")
-)
+# direction_markup = ReplyKeyboardMarkup(
+#     resize_keyboard=True,
+#     one_time_keyboard=True,
+#     row_width=3
+# ).add(
+#     KeyboardButton("BACKEND"),
+#     KeyboardButton("FRONT-END"),
+#     KeyboardButton("UX-UI DESIGN"),
+#     KeyboardButton("IOS"),
+#     KeyboardButton("ANDROID")
+# )
 
 submit_markup = ReplyKeyboardMarkup(
     resize_keyboard=True,
     one_time_keyboard=True,
-    row_width=3
+    row_width=2
 ).add(
-    KeyboardButton("ВСЕ ВЕРНО"),
-    KeyboardButton("ЗАНОВО"),
-    KeyboardButton("ОТМЕНА"),
+    KeyboardButton("да"),
+    KeyboardButton("нет")
+
 )
