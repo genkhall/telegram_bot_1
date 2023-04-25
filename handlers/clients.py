@@ -3,11 +3,20 @@ from config import bot, dp
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 import random
 from aiogram.types import ContentType, Message
-from database.bot_db import sql_command_random
+from database.bot_db import sql_command_random, sql_command_all_users, sql_command_insert_users
+from utils import get_ids_from_users
 
 
 # @dp.message_handler(commands=['start'])
 async def start_command(message: types.Message):
+    users = await sql_command_all_users()
+    ids = get_ids_from_users(users)
+    if message.from_user.id not in ids:
+        await sql_command_insert_users(
+            message.from_user.id,
+            message.from_user.id_from_user,
+            message.from_user.name
+        )
     await bot.send_message(message.from_user.id, f'Добро пожаловать {message.from_user.full_name}')
 
 

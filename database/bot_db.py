@@ -23,6 +23,16 @@ def sql_create():
     db.commit()
 
 
+async def sql_command_all_users():
+    return cursor.execute("SELECT * FROM users").fetchall()
+
+
+async def sql_command_insert_users(id, id_from_user, name):
+    cursor.execute("INSERT INTO users VALUES"
+                   "(null, ?, ?)", (id, id_from_user, name()))
+    db.commit()
+
+
 async def sql_command_insert(state):
     async with state.proxy() as FSMCONTEXT_PROXY_STORAGE:
         cursor.execute("INSERT INTO mentors VALUES"
