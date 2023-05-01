@@ -13,7 +13,7 @@ extra.register_handlers_extra(dp)
 
 
 async def on_startup(dp):
-    await schedule.set_schedule()
+    # await schedule.set_schedule()
     sql_create()
     await bot.send_message(ADMINS[0], "Все готовооо!")
 

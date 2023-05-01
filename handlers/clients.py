@@ -4,20 +4,22 @@ from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 import random
 from aiogram.types import ContentType, Message
 from database.bot_db import sql_command_random, sql_command_all_users, sql_command_insert_users
-from utils import get_ids_from_users
+# from utils import get_ids_from_users
+from datetime import datetime, timedelta
+from parser.catalog import target_date
 
 
 # @dp.message_handler(commands=['start'])
-async def start_command(message: types.Message):
-    users = await sql_command_all_users()
-    ids = get_ids_from_users(users)
-    if message.from_user.id not in ids:
-        await sql_command_insert_users(
-            message.from_user.id,
-            message.from_user.id_from_user,
-            message.from_user.name
-        )
-    await bot.send_message(message.from_user.id, f'Добро пожаловать {message.from_user.full_name}')
+# async def start_command(message: types.Message):
+#     users = await sql_command_all_users()
+#     ids = get_ids_from_users(users)
+#     if message.from_user.id not in ids:
+#         await sql_command_insert_users(
+#             message.from_user.id,
+#             message.from_user.id_from_user,
+#             message.from_user.name
+#         )
+#     await bot.send_message(message.from_user.id, f'Добро пожаловать {message.from_user.full_name}')
 
 
 async def quiz_1(message: types.Message):
@@ -78,9 +80,40 @@ async def get_random_mentor():
                            f'{random_user[5]}')
 
 
+async def get_news_date(message: types.Message):
+    await message.delete()
+    current_date: datetime = datetime.now()
+    date_list = [current_date - timedelta(days=i) for i in range(11)]
+    markup = InlineKeyboardMarkup(row_width=2)
+    for date in date_list:
+        markup.add(
+            InlineKeyboardButton(
+                date.strftime("%d.%m.%Y"),
+                callback_data=f"date {date.strftime('%Y-%m-%d')}"
+            )
+        )
+    await message.answer("Выберите дату: ", reply_markup=markup)
+
+
+async def send_news(call: types.CallbackQuery):
+    date = call.data.replace("date ", "")
+    news = target_date(year=date[:4], month=date[5:7], day=date[-2:])
+    for i in news[:6]:
+        await call.message.answer_photo(
+            photo=i['photo'],
+            caption=f"{i['url']}\n"
+                    f"{i['title']} {i['time']}\n"
+        )
+
+
 def register_handlers_client(dp: Dispatcher):
-    dp.register_message_handler(start_command, commands=['start'])
+    # dp.register_message_handler(start_command, commands=['start'])
     dp.register_message_handler(quiz_1, commands=['quiz'])
     dp.register_message_handler(send_meme, commands=['mem'])
     dp.register_message_handler(cmd_pin, commands=['pin'], commands_prefix='!/')
     dp.register_message_handler(get_random_mentor, commands=['get'])
+    dp.register_message_handler(get_news_date, commands=['sputnik'])
+    dp.register_callback_query_handler(
+        send_news,
+        lambda call: call.data and call.data.startswith("date ")
+    )

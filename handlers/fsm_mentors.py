@@ -89,7 +89,7 @@ async def cancel_reg(message: types.Message, state: FSMContext):
     if current_state is not None:
         await state.finish()
         await message.answer('Canceled', reply_markup=client_kb.start_markup)
-        # Чтоб после отмены сразу показывались все кнпопки
+
 
 
 # =====================================================================================================================

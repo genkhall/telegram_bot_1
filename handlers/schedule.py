@@ -3,7 +3,7 @@ import datetime
 from aiogram import Bot
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from database.bot_db import sql_command_all_users
-from apscheduler.triggers.cron import CronTrigger
+# from apscheduler.triggers.cron import CronTrigger
 from apscheduler.triggers.date import DateTrigger
 from config import bot
 

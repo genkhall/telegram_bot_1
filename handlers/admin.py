@@ -22,15 +22,15 @@ async def delete_data(message: types.Message):
                 ))
 
 
-async def complete_delete(call: types.CallbackQuery):
-    id_user = call.data.replace("delete ", "")
-    await sql_command_delete(id_user)
-    await call.answer(text=f"Удалена запись с айди {id_user}",
-                      show_alert=True)
-    await call.message.delete()
+# async def complete_delete(call: types.CallbackQuery):
+#     id_user = call.data.replace("delete ", "")
+#     await sql_command_delete(id_user)
+#     await call.answer(text=f"Удалена запись с айди {id_user}",
+#                       show_alert=True)
+#     await call.message.delete()
 
 
 def register_handlers_admin(dp: Dispatcher):
     dp.register_message_handler(delete_data, commands=['del'])
-    dp.register_message_handler(complete_delete,
-                                lambda call: call.data and call.data.startswith("delete"))
+    # dp.register_message_handler(complete_delete,
+    #                             lambda call: call.data and call.data.startswith("delete"))
