@@ -1,24 +1,41 @@
 from aiogram import Dispatcher, types
-from config import bot, ADMINS
+from config import bot, ADMINS, API_KEY
+import pyowm
 
-import random
-# from aiogram.types import ContentType, Message
+owm = pyowm.OWM(API_KEY)
+
+
+async def weather_command(message: types.Message):
+    await message.reply("Введите город")
+
+
+async def weather(message: types.Message):
+    try:
+        city = message.text
+        observation = owm.weather_at_place(city)
+
+        if observation is None:
+            await message.reply(f"Информация о погоде для города {city} не найдена")
+            return
+
+        w = observation.get_weather()
+
+        temperature = w.get_temperature('celsius')['temp']
+        status = w.get_status()
+
+        weather_message = f"Текущая температура в {city} - {temperature:.1f}°C\nСостояние погоды - {status}"
+
+        await message.reply(weather_message)
+
+    except Exception as e:
+        await message.reply(f"Ошибка: {e}")
 
 
 async def echo_message(message: types.Message):
-    if message.from_user.id not in ADMINS:
-        if message.text.lower() == 'game':
-            a = ['⚽', '🎰', '🏀', '🎯', '🎳', '🎲']
-            chosen = random.choice(a)
-            await bot.send_dice(message.chat.id, emoji=chosen)
-    else:
-        try:
-            number = int(message.text)
-            result = number ** 2
-            await bot.send_message(chat_id=message.from_user.id, text=f'{result}')
-        except ValueError:
-            await bot.send_message(chat_id=message.from_user.id, text=f'{message.text}')
+    await bot.send_message("HI")
 
 
 def register_handlers_extra(dp: Dispatcher):
+    dp.register_message_handler(weather_command, commands=['weather'])
+    dp.register_message_handler(weather)
     dp.register_message_handler(echo_message)

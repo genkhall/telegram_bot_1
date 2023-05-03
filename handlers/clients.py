@@ -6,7 +6,7 @@ from aiogram.types import ContentType, Message
 from database.bot_db import sql_command_random, sql_command_all_users, sql_command_insert_users
 # from utils import get_ids_from_users
 from datetime import datetime, timedelta
-from parser.catalog import target_date
+# from parser.catalog import target_date
 
 
 # @dp.message_handler(commands=['start'])
@@ -104,6 +104,18 @@ async def send_news(call: types.CallbackQuery):
             caption=f"{i['url']}\n"
                     f"{i['title']} {i['time']}\n"
         )
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 def register_handlers_client(dp: Dispatcher):
